@@ -2,6 +2,8 @@
 // Using typescript as traspiler
 
 const input = "(set! twox (* x 2))"
+const input2 = "(define circle-area (lambda (r) (* pi (* r r))))"
+const input3 = "(begin (define r 10) (* pi (* r r)))"
 
 const env = new Object()
 const tokenize = (input: string) => input.replace(/(\()|(\))/g, (_, a, b) => { if (a) { return `${a} `} else { return ` ${b}` } } ).split(" ")
@@ -18,7 +20,7 @@ const parse = (tokens: Array<string>) => {
     while (tokens[0] !== ")") {
       list.push(parse(tokens))
     }
-    tokens.pop()
+    tokens.shift()
 
     return list
   } else if (no1 === ")") {
@@ -30,7 +32,8 @@ const parse = (tokens: Array<string>) => {
 
 // test
 console.log(
-  parse(tokenize(input))
+  // tokenize(input3)
+  parse(tokenize(input3))
 )
 
 /*
