@@ -1,5 +1,5 @@
 // Ref: http://norvig.com/lispy.html
-// Using typescript as traspiler
+// Using typescript as transpiler
 
 const globalEnv = {}
 // globalEnv["+"] = (a, b) => a + b
@@ -44,7 +44,6 @@ import * as R from "ramda"
 
 export default function evalate(s: string | number | Array<string>, tmpEnv?) {
   const env = tmpEnv ? R.merge(globalEnv, tmpEnv) : globalEnv
-  // if (tmpEnv) console.log(s)
   if (typeof s === 'string') {
     return env[s]
   } else if (typeof s === "number") {
