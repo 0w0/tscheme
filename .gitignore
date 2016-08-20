@@ -1,5 +1,3 @@
-tsconfig.json
-typings.json
-package.json
+.vscode
 node_modules
 typings
