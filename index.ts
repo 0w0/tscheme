@@ -10,11 +10,12 @@ const globalEnv = {}
 // globalEnv["<"] = (a, b) => a < b
 // globalEnv[">="] = (a, b) => a >= b
 // globalEnv["<="] = (a, b) => a <= b
-// globalEnv["="] = (a, b) => a === b
-const ops = ["+", "-", "*", "/", ">", "<", ">=", "<=", "="].forEach(op => { globalEnv[op] = (a, b) => eval(`${a} ${op} ${b}`) })
+const ops = ["+", "-", "*", "/", ">", "<", ">=", "<="].forEach(op => { globalEnv[op] = (a, b) => eval(`${a} ${op} ${b}`) })
+globalEnv["="] = (a, b) => a === b
 globalEnv["equal?"] = globalEnv["="]
 globalEnv["eq?"] = globalEnv["="]
 globalEnv["remainder"] = (a, b) => a % b
+globalEnv["display"] = console.log
 
 const tokenize = (input: string) => input.replace(/(\()|(\))/g, (_, a, b) => { if (a) { return `${a} `} else { return ` ${b}` } } ).split(" ")
 const atom = (token) => {
@@ -48,18 +49,21 @@ function merge(a, b) {
   return obj
 }
 
+const matchString = /(^"(.*)"$)|(^'(.*)'$)/ 
+
 export default function evalate(s: string | number | Array<string>, tmpEnv?) {
   const env = tmpEnv ? merge(globalEnv, tmpEnv) : globalEnv
   if (typeof s === 'string') {
-    return env[s]
+    return s.match(matchString) ? s.replace(matchString, (_, a, b, c ,d) => { if (b) { return b } else { return d } }) : env[s]
   } else if (typeof s === "number") {
     return s
   } else if (s[0] === "quote") {
     return s.slice(1)
   } else if (s[0] === "if") {
     const [_, test, ret, or] = s
-    
-    return evalate(test) ? ret : or
+    const exp = evalate(test) ? ret : or
+
+    return evalate(exp)
   } else if (s[0] === "define") {
     const [_, name, exp] = s
     env[name] = evalate(exp)
@@ -70,6 +74,7 @@ export default function evalate(s: string | number | Array<string>, tmpEnv?) {
     const [_, params, func] = s
     const tmpEnv = {}
     return (...args) => {
+      // assgin closure variable into temp env
       args.forEach((val, idx) => tmpEnv[params[idx]] = val)
 
       return evalate(func, tmpEnv)
@@ -81,41 +86,28 @@ export default function evalate(s: string | number | Array<string>, tmpEnv?) {
     const operation = evalate(op, tmpEnv)
     const subedArgs = args.map(arg => evalate(arg, tmpEnv))
 
+    console.log(op, operation, subedArgs)
+
     return operation.apply(null, subedArgs)
   }
 }
 
-const lamba1 = "(define area (lambda (r) (* 3.141592653 (* r r))))"
-const lamba2 = "(area 3)"
+/* TEST */
+let log = console.log
 
-const t1 = "(define r 10)"
-const t2 = "(* 3 (* r r))"
-const t3 = "(* 3 2)"
+// const lamba1 = "(define area (lambda (r) (* 3.141592653 (* r r))))"
+// const lamba2 = "(area 3)"
+// evalate(parse(tokenize(lamba1)))
+// var qa = evalate(parse(tokenize(lamba2)))
+// log(qa)
 
-evalate(parse(tokenize(lamba1)))
-const qa = evalate(parse(tokenize(lamba2)))
-
-console.log(qa)
-console.log(globalEnv)
-
-// console.log(env)
-// console.log(
-  // parse(tokenize(lamba1))
-// )
-
+// const t1 = "(define r 10)"
+// const t2 = "(* 3 (* r r))"
 // evalate(parse(tokenize(t1)))
-// console.log(env)
 // var q = evalate(parse(tokenize(t2)))
-// var q = evalate(parse(tokenize("12")))
+// log(q)
 
-// console.log(q)
-
-// console.log(q)
-
-// evalate(parse(tokenize(t1)), env)
-// test
-// console.log(JSON.stringify(
-  // tokenize(input3)
-  // parse(tokenize(t1)),
-  // evalate(parse(tokenize(t3)), env)
-// ))
+const if1 = '(if (= 1 1) (display "yo") (display 2))'
+evalate(parse(tokenize(if1)))
+// const str = '"123"'
+// log(str)
