@@ -37,8 +37,8 @@ const parse = (tokens: Array<string>) => {
 // Return a obj that shadow copy from a and b, a's prop will overwrite b's prop 
 function merge(a, b) {
   const obj = {}
-  for (var key in b) { if (b.hasOwnProperty(key)) { obj[key] = b[key] } }
-  for (var key in a) { if (a.hasOwnProperty(key)) { obj[key] = a[key] } }
+  for (let key in a) { obj[key] = a[key] }
+  for (let key in b) { obj[key] = b[key] }
 
   return obj
 }
@@ -55,15 +55,15 @@ export default function evalate(s: string | number | Array<string>, tmpEnv?) {
     return s.slice(1)
   } else if (s[0] === "if") {
     const [_, test, ret, or] = s
-    const exp = evalate(test) ? ret : or
+    const exp = evalate(test, tmpEnv) ? ret : or
 
-    return evalate(exp)
+    return evalate(exp, tmpEnv)
   } else if (s[0] === "define") {
     const [_, name, exp] = s
-    env[name] = evalate(exp)
+    env[name] = evalate(exp, tmpEnv)
   } else if (s[0] === "set!") {
     const [_, name, exp] = s
-    env[name] = evalate(exp)
+    env[name] = evalate(exp, tmpEnv)
   } else if (s[0] === "lambda") {
     const [_, params, func] = s
     const tmpEnv = {}
@@ -76,23 +76,32 @@ export default function evalate(s: string | number | Array<string>, tmpEnv?) {
   } else if (s[0] === "begin") {
     const [_, ...exps] = s
 
-    return exps.map(exp => evalate(exp)).pop()
+    return exps.map(exp => evalate(exp, tmpEnv)).pop()
   } else {
     const [op, ...args] = s
     const operation = evalate(op, tmpEnv)
+    // console.log("",env)
     const subedArgs = args.map(arg => evalate(arg, tmpEnv))
 
     return operation.apply(null, subedArgs)
   }
 }
 
+// import * as repl from "repl"
+// repl.start({
+//   prompt: "tscheme> ",
+//   eval: (cmd, context, filename, callback) => {
+//     callback(null, evalate(parse(tokenize(cmd.replace(/\n$/, "")))))
+//   }
+// })
+
 /* TEST */
 let log = console.log
 let eva = (s) => evalate(parse(tokenize(s)))
 // const lamba1 = "(define area (lambda (r) (* 3.141592653 (* r r))))"
 // const lamba2 = "(area 3)"
-// evalate(parse(tokenize(lamba1)))
-// var qa = evalate(parse(tokenize(lamba2)))
+// eva(lamba1)
+// var qa = eva(lamba2)
 // log(qa)
 
 // const t1 = "(define r 10)"
@@ -101,10 +110,14 @@ let eva = (s) => evalate(parse(tokenize(s)))
 // var q = eva(t2)
 // log(q)
 
-// const if1 = '(if (> 1 2) (display "true") (display "false"))'
+// const if1 = '(if (> 1 0) (display "true") (display "false"))'
 // eva(if1)
-// const str = '"123"'
-// log(str)
 
-const begin = "(begin (define r 10) (* pi (* r r)))"
-log(eva(begin))
+// const begin = "(begin (define r 10) (* pi (* r r)))"
+// log(eva(begin))
+
+// const fact1 = "(define fact (lambda (n) (if (<= n 1) 1 (* n (fact (- n 1))))))"
+// const fact2 = "(fact 100)"
+// eva(fact1)
+// var q = eva(fact2)
+// log(q)
