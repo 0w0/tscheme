@@ -24,7 +24,7 @@ const atom = (token) => {
   return isNaN(ret) ? token : ret
 }
 const parse = (tokens: Array<string>) => {
-  if (tokens.length === 0) throw Error("Unexpected EOF while reading !")
+  if (tokens.length === 0) throw Error("Error: Unexpected EOF while reading !")
   const no1 = tokens.shift()
   if (no1 === "(") {
     let list = []
@@ -35,7 +35,7 @@ const parse = (tokens: Array<string>) => {
 
     return list
   } else if (no1 === ")") {
-    throw Error("Unexpected ) !")
+    throw Error("Error: Unexpected ) !")
   } else {
     return atom(no1)
   }
@@ -54,7 +54,7 @@ const matchString = /(^"(.*)"$)|(^'(.*)'$)/
 export default function evalate(s: string | number | Array<string>, tmpEnv?) {
   const env = tmpEnv ? merge(globalEnv, tmpEnv) : globalEnv
   if (typeof s === 'string') {
-    return s.match(matchString) ? s.replace(matchString, (_, a, b, c ,d) => { if (b) { return b } else { return d } }) : env[s]
+    return s.match(matchString) ? s.replace(matchString, (_, a, b, c ,d) => { if (b) { return b } else { return d } }) : env[s] ? env[s] : `Error: Unbond symbol: ${s} !`
   } else if (typeof s === "number") {
     return s
   } else if (s[0] === "quote") {
@@ -86,8 +86,6 @@ export default function evalate(s: string | number | Array<string>, tmpEnv?) {
     const operation = evalate(op, tmpEnv)
     const subedArgs = args.map(arg => evalate(arg, tmpEnv))
 
-    console.log(op, operation, subedArgs)
-
     return operation.apply(null, subedArgs)
   }
 }
@@ -107,7 +105,7 @@ let log = console.log
 // var q = evalate(parse(tokenize(t2)))
 // log(q)
 
-const if1 = '(if (= 1 1) (display "yo") (display 2))'
+const if1 = '(if (> 1 2) (display "true") (display "false"))'
 evalate(parse(tokenize(if1)))
 // const str = '"123"'
 // log(str)
