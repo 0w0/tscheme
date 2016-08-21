@@ -40,10 +40,16 @@ const parse = (tokens: Array<string>) => {
   }
 }
 
-import * as R from "ramda"
+function merge(a, b) {
+  const obj = {}
+  for (var key in a) { if (a.hasOwnProperty(key)) { obj[key] = a[key] } }
+  for (var key in b) { if (b.hasOwnProperty(key)) { obj[key] = b[key] } }
+
+  return obj
+}
 
 export default function evalate(s: string | number | Array<string>, tmpEnv?) {
-  const env = tmpEnv ? R.merge(globalEnv, tmpEnv) : globalEnv
+  const env = tmpEnv ? merge(globalEnv, tmpEnv) : globalEnv
   if (typeof s === 'string') {
     return env[s]
   } else if (typeof s === "number") {
@@ -90,6 +96,7 @@ evalate(parse(tokenize(lamba1)))
 const qa = evalate(parse(tokenize(lamba2)))
 
 console.log(qa)
+console.log(globalEnv)
 
 // console.log(env)
 // console.log(
