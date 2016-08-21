@@ -2,14 +2,6 @@
 // Using typescript as transpiler
 
 const globalEnv = {}
-// globalEnv["+"] = (a, b) => a + b
-// globalEnv["-"] = (a, b) => a - b
-// globalEnv["*"] = (a, b) => a * b
-// globalEnv["/"] = (a, b) => a / b
-// globalEnv[">"] = (a, b) => a > b
-// globalEnv["<"] = (a, b) => a < b
-// globalEnv[">="] = (a, b) => a >= b
-// globalEnv["<="] = (a, b) => a <= b
 const ops = ["+", "-", "*", "/", ">", "<", ">=", "<="].forEach(op => { globalEnv[op] = (a, b) => eval(`${a} ${op} ${b}`) })
 globalEnv["="] = (a, b) => a === b
 globalEnv["equal?"] = globalEnv["="]
@@ -41,10 +33,11 @@ const parse = (tokens: Array<string>) => {
   }
 }
 
+// Return a obj that shadow copy from a and b, a's prop will overwrite b's prop 
 function merge(a, b) {
   const obj = {}
-  for (var key in a) { if (a.hasOwnProperty(key)) { obj[key] = a[key] } }
   for (var key in b) { if (b.hasOwnProperty(key)) { obj[key] = b[key] } }
+  for (var key in a) { if (a.hasOwnProperty(key)) { obj[key] = a[key] } }
 
   return obj
 }
