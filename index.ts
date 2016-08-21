@@ -8,6 +8,7 @@ globalEnv["equal?"] = globalEnv["="]
 globalEnv["eq?"] = globalEnv["="]
 globalEnv["remainder"] = (a, b) => a % b
 globalEnv["display"] = console.log
+globalEnv["pi"] = Math.PI
 
 const tokenize = (input: string) => input.replace(/(\()|(\))/g, (_, a, b) => { if (a) { return `${a} `} else { return ` ${b}` } } ).split(" ")
 const atom = (token) => {
@@ -73,7 +74,9 @@ export default function evalate(s: string | number | Array<string>, tmpEnv?) {
       return evalate(func, tmpEnv)
     }
   } else if (s[0] === "begin") {
-    // todo
+    const [_, ...exps] = s
+
+    return exps.map(exp => evalate(exp)).pop()
   } else {
     const [op, ...args] = s
     const operation = evalate(op, tmpEnv)
@@ -85,7 +88,7 @@ export default function evalate(s: string | number | Array<string>, tmpEnv?) {
 
 /* TEST */
 let log = console.log
-
+let eva = (s) => evalate(parse(tokenize(s)))
 // const lamba1 = "(define area (lambda (r) (* 3.141592653 (* r r))))"
 // const lamba2 = "(area 3)"
 // evalate(parse(tokenize(lamba1)))
@@ -94,11 +97,14 @@ let log = console.log
 
 // const t1 = "(define r 10)"
 // const t2 = "(* 3 (* r r))"
-// evalate(parse(tokenize(t1)))
-// var q = evalate(parse(tokenize(t2)))
+// eva(t1)
+// var q = eva(t2)
 // log(q)
 
-const if1 = '(if (> 1 2) (display "true") (display "false"))'
-evalate(parse(tokenize(if1)))
+// const if1 = '(if (> 1 2) (display "true") (display "false"))'
+// eva(if1)
 // const str = '"123"'
 // log(str)
+
+const begin = "(begin (define r 10) (* pi (* r r)))"
+log(eva(begin))
