@@ -34,7 +34,7 @@ const parse = (tokens: Array<string>) => {
   }
 }
 
-// Return a obj that shadow copy from a and b, a's prop will overwrite b's prop 
+// Return a obj that shadow copy from a and b, a's prop will be overwrite by b's prop 
 function merge(a, b) {
   const obj = {}
   for (let key in a) { obj[key] = a[key] }
@@ -45,8 +45,7 @@ function merge(a, b) {
 
 const matchString = /(^"(.*)"$)|(^'(.*)'$)/ 
 
-export default function evalate(s: string | number | Array<string>, tmpEnv?) {
-  const env = tmpEnv ? merge(globalEnv, tmpEnv) : globalEnv
+function evalate(s: string | number | Array<string>, env = globalEnv) {
   if (typeof s === 'string') {
     return s.match(matchString) ? s.replace(matchString, (_, a, b, c ,d) => { if (b) { return b } else { return d } }) : env[s] ? env[s] : `Error: Unbond symbol: ${s} !`
   } else if (typeof s === "number") {
@@ -55,33 +54,32 @@ export default function evalate(s: string | number | Array<string>, tmpEnv?) {
     return s.slice(1)
   } else if (s[0] === "if") {
     const [_, test, ret, or] = s
-    const exp = evalate(test, tmpEnv) ? ret : or
+    const exp = evalate(test, env) ? ret : or
 
-    return evalate(exp, tmpEnv)
+    return evalate(exp, env)
   } else if (s[0] === "define") {
     const [_, name, exp] = s
-    env[name] = evalate(exp, tmpEnv)
+    env[name] = evalate(exp, env)
   } else if (s[0] === "set!") {
     const [_, name, exp] = s
-    env[name] = evalate(exp, tmpEnv)
+    env[name] = evalate(exp, env)
   } else if (s[0] === "lambda") {
     const [_, params, func] = s
-    const tmpEnv = {}
-    return (...args) => {
-      // assgin closure variable into temp env
-      args.forEach((val, idx) => tmpEnv[params[idx]] = val)
 
-      return evalate(func, tmpEnv)
+    return (...args) => {
+      const tmpEnv =  {}
+      args.forEach((val, idx) => tmpEnv[params[idx]] = val)
+      
+      return evalate(func, merge(env, tmpEnv))
     }
   } else if (s[0] === "begin") {
     const [_, ...exps] = s
 
-    return exps.map(exp => evalate(exp, tmpEnv)).pop()
+    return exps.map(exp => evalate(exp, env)).pop()
   } else {
     const [op, ...args] = s
-    const operation = evalate(op, tmpEnv)
-    // console.log("",env)
-    const subedArgs = args.map(arg => evalate(arg, tmpEnv))
+    const operation = evalate(op, env)
+    const subedArgs = args.map(arg => evalate(arg, env))
 
     return operation.apply(null, subedArgs)
   }
@@ -98,6 +96,7 @@ export default function evalate(s: string | number | Array<string>, tmpEnv?) {
 /* TEST */
 let log = console.log
 let eva = (s) => evalate(parse(tokenize(s)))
+export { eva }
 // const lamba1 = "(define area (lambda (r) (* 3.141592653 (* r r))))"
 // const lamba2 = "(area 3)"
 // eva(lamba1)
@@ -121,3 +120,9 @@ let eva = (s) => evalate(parse(tokenize(s)))
 // eva(fact1)
 // var q = eva(fact2)
 // log(q)
+
+eva("(define twice (lambda (x) (* 2 x)))")
+eva("(define repeat (lambda (f) (lambda (x) (f (f x)))))")
+log(eva("((repeat (repeat twice)) 10)")) // 160
+log(eva("((repeat (repeat (repeat twice))) 10)")) // 2560
+log(eva("((repeat (repeat (repeat (repeat twice)))) 10)")) // 655360
