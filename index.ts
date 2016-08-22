@@ -18,11 +18,11 @@ globalEnv["display"] = console.log
 globalEnv["append"] =
 globalEnv["apply"] =
 globalEnv["begin"] =
-globalEnv["car"] = x => x[0]
-globalEnv["cdr"] = x => x.slice(1)
+globalEnv["car"] = x => (x.length !== 0) ? x[0] : null 
+globalEnv["cdr"] = x => (x.length > 1) ? x.slice(1) : null 
 globalEnv["cons"] = (x: any, y: Array<any>) => [x].concat(y)
 globalEnv["length"] = x => x.length
-globalEnv["list"] = x => [x]
+globalEnv["list"] = (...x) => x
 globalEnv["list?"] = x => typeof x === "array"
 globalEnv["range"] = (a, b) => [...Array(b-a+1)].map((v, k) => k + a)
 globalEnv["map"] = (cb, list) => list.map(cb)
@@ -122,7 +122,7 @@ function evalate(s: string | number | Array<string>, env = globalEnv) {
 let log = console.log
 let eva = (s) => {
   const out = evalate(parse(tokenize(s)))
-  if (out) log(out) 
+  if (out !== undefined) log(out) 
 }
 export { eva }
 // eva("(define area (lambda (r) (* 3.141592653 (* r r))))")
@@ -135,8 +135,8 @@ export { eva }
 eva("(define first car)")
 eva("(define rest cdr)")
 eva("(define count (lambda (item L) (if L (+ (equal? item (first L)) (count item (rest L))) 0)))")
-// eva("(count 0 (list 0 1 2 3 0 0))")
-// eva("(count (quote the) (quote (the more the merrier the bigger the better)))")
+eva("(count 0 (list 0 1 2 3 0 0))")
+eva("(count (quote the) (quote (the more the merrier the bigger the better)))")
 
 // eva("(define twice (lambda (x) (* 2 x)))")
 // eva("(define repeat (lambda (f) (lambda (x) (f (f x)))))")
