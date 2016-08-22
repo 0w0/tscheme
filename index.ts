@@ -110,45 +110,4 @@ function evalate(s: string | number | Array<string>, env = globalEnv) {
   }
 }
 
-// import * as repl from "repl"
-// repl.start({
-//   prompt: "tscheme> ",
-//   eval: (cmd, context, filename, callback) => {
-//     callback(null, evalate(parse(tokenize(cmd.replace(/\n$/, "")))))
-//   }
-// })
-
-/* TEST */
-let log = console.log
-let eva = (s) => {
-  const out = evalate(parse(tokenize(s)))
-  if (out !== undefined) log(out) 
-}
-export { eva }
-eva("(define area (lambda (r) (* 3.141592653 (* r r))))")
-eva("(area 3)")
-
-eva("(define fact (lambda (n) (if (<= n 1) 1 (* n (fact (- n 1))))))")
-eva("(fact 10)")
-eva("(fact 100)")
-
-eva("(define first car)")
-eva("(define rest cdr)")
-eva("(define count (lambda (item L) (if L (+ (equal? item (first L)) (count item (rest L))) 0)))")
-eva("(count 0 (list 0 1 2 3 0 0))")
-eva("(count (quote the) (quote (the more the merrier the bigger the better)))")
-
-eva("(define twice (lambda (x) (* 2 x)))")
-eva("(twice 5)")
-eva("(define repeat (lambda (f) (lambda (x) (f (f x)))))")
-eva("((repeat (repeat twice)) 10)") // 160
-eva("((repeat (repeat (repeat twice))) 10)") // 2560
-eva("((repeat (repeat (repeat (repeat twice)))) 10)") // 655360
-
-eva("(pow 2 16)")
-
-eva("(define fib (lambda (n) (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2))))))")
-eva("(define range (lambda (a b) (if (= a b) (quote ()) (cons a (range (+ a 1) b)))))")
-eva("(range 0 10)")
-eva("(map fib (range 0 10))")
-eva("(map fib (range 0 20))")
+export const eva = (s) =>evalate(parse(tokenize(s)))
