@@ -1,14 +1,39 @@
 // Ref: http://norvig.com/lispy.html
 // Using typescript as transpiler
 
+// TODO list data type
+
+
 const globalEnv = {}
+// Import all Math method for convenience
+Object.getOwnPropertyNames(Math).forEach(method => globalEnv[method] = Math[method])
+// Import operator by eval closure
 const ops = ["+", "-", "*", "/", ">", "<", ">=", "<="].forEach(op => { globalEnv[op] = (a, b) => eval(`${a} ${op} ${b}`) })
+// self defined
 globalEnv["="] = (a, b) => a === b
 globalEnv["equal?"] = globalEnv["="]
 globalEnv["eq?"] = globalEnv["="]
 globalEnv["remainder"] = (a, b) => a % b
 globalEnv["display"] = console.log
-globalEnv["pi"] = Math.PI
+globalEnv["append"] =
+globalEnv["apply"] =
+globalEnv["begin"] =
+globalEnv["car"] = x => x[0]
+globalEnv["cdr"] = x => x.slice(1)
+globalEnv["cons"] = (x: any, y: Array<any>) => [x].concat(y)
+globalEnv["length"] = x => x.length
+globalEnv["list"] = x => [x]
+globalEnv["list?"] = x => typeof x === "array"
+globalEnv["range"] = (a, b) => [...Array(b-a+1)].map((v, k) => k + a)
+globalEnv["map"] = (cb, list) => list.map(cb)
+
+/*
+'not':     op.not_,
+'null?':   lambda x: x == [], 
+'number?': lambda x: isinstance(x, Number),   
+'procedure?': callable,
+'symbol?': lambda x: isinstance(x, Symbol),
+*/
 
 const tokenize = (input: string) => input.replace(/(\()|(\))/g, (_, a, b) => { if (a) { return `${a} `} else { return ` ${b}` } } ).split(" ")
 const atom = (token) => {
@@ -121,8 +146,8 @@ export { eva }
 // var q = eva(fact2)
 // log(q)
 
-eva("(define twice (lambda (x) (* 2 x)))")
-eva("(define repeat (lambda (f) (lambda (x) (f (f x)))))")
-log(eva("((repeat (repeat twice)) 10)")) // 160
-log(eva("((repeat (repeat (repeat twice))) 10)")) // 2560
-log(eva("((repeat (repeat (repeat (repeat twice)))) 10)")) // 655360
+// eva("(define twice (lambda (x) (* 2 x)))")
+// eva("(define repeat (lambda (f) (lambda (x) (f (f x)))))")
+// log(eva("((repeat (repeat twice)) 10)")) // 160
+// log(eva("((repeat (repeat (repeat twice))) 10)")) // 2560
+// log(eva("((repeat (repeat (repeat (repeat twice)))) 10)")) // 655360
