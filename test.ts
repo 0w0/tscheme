@@ -11,10 +11,14 @@ const test = (exps: Array<string>, expect) => {
   }
 }
 
-test(["(define area (lambda (r) (* 3.141592653 (* r r))))", "(area 3)"], 28.274333877)
-test(["(define fact (lambda (n) (if (<= n 1) 1 (* n (fact (- n 1))))))","(fact 10)"], 3628800)
-test(["(define fact (lambda (n) (if (<= n 1) 1 (* n (fact (- n 1))))))","(fact 100)"], 9.33262154439441e+157)
-let preDefine = [
+let preDefine = ["(define fact (lambda (n) (if (<= n 1) 1 (* n (fact (- n 1))))))"]
+
+test(["(define circle-area (lambda (r) (* 3.141592653 (* r r))))", "(circle-area 3)"], 28.274333877)
+test(preDefine.concat(["(fact 10)"]), 3628800)
+test(preDefine.concat(["(fact 100)"]), 9.33262154439441e+157)
+test(preDefine.concat(["(define circle-area (lambda (r) (* 3.141592653 (* r r))))", "(circle-area (fact 10))"]), 41369087198016.19)
+
+preDefine = [
   "(define first car)",
   "(define rest cdr)",
   "(define count (lambda (item L) (if L (+ (equal? item (first L)) (count item (rest L))) 0)))"
