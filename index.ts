@@ -35,7 +35,7 @@ globalEnv["map"] = (cb, list) => list.map(cb)
 'symbol?': lambda x: isinstance(x, Symbol),
 */
 
-const tokenize = (input: string) => input.replace(/(\()|(\))/g, (_, a, b) => { if (a) { return `${a} `} else { return ` ${b}` } } ).split(" ")
+const tokenize = (input: string) => input.replace(/(\()|(\))/g, (_, a, b) => { if (a) { return ` ${a} `} else { return ` ${b} ` } } ).replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "").split(" ");
 const atom = (token) => {
   const ret = Number(token)
 
@@ -72,11 +72,11 @@ const matchString = /(^"(.*)"$)|(^'(.*)'$)/
 
 function evalate(s: string | number | Array<string>, env = globalEnv) {
   if (typeof s === 'string') {
-    return s.match(matchString) ? s.replace(matchString, (_, a, b, c ,d) => { if (b) { return b } else { return d } }) : env[s] ? env[s] : `Error: Unbond symbol: ${s} !`
+    return s.match(matchString) ? s.replace(matchString, (_, a, b, c ,d) => { if (b) { return b } else { return d } }) : env[s]
   } else if (typeof s === "number") {
     return s
   } else if (s[0] === "quote") {
-    return s.slice(1)
+    return s[1]
   } else if (s[0] === "if") {
     const [_, test, ret, or] = s
     const exp = evalate(test, env) ? ret : or
@@ -94,7 +94,7 @@ function evalate(s: string | number | Array<string>, env = globalEnv) {
     return (...args) => {
       const tmpEnv =  {}
       args.forEach((val, idx) => tmpEnv[params[idx]] = val)
-      
+
       return evalate(func, merge(env, tmpEnv))
     }
   } else if (s[0] === "begin") {
@@ -120,34 +120,33 @@ function evalate(s: string | number | Array<string>, env = globalEnv) {
 
 /* TEST */
 let log = console.log
-let eva = (s) => evalate(parse(tokenize(s)))
+let eva = (s) => {
+  const out = evalate(parse(tokenize(s)))
+  if (out) log(out) 
+}
 export { eva }
-// const lamba1 = "(define area (lambda (r) (* 3.141592653 (* r r))))"
-// const lamba2 = "(area 3)"
-// eva(lamba1)
-// var qa = eva(lamba2)
-// log(qa)
+// eva("(define area (lambda (r) (* 3.141592653 (* r r))))")
+// eva("(area 3)")
 
-// const t1 = "(define r 10)"
-// const t2 = "(* 3 (* r r))"
-// eva(t1)
-// var q = eva(t2)
-// log(q)
+// eva("(define fact (lambda (n) (if (<= n 1) 1 (* n (fact (- n 1))))))")
+// eva("(fact 10)")
+// eva("(fact 100)")
 
-// const if1 = '(if (> 1 0) (display "true") (display "false"))'
-// eva(if1)
-
-// const begin = "(begin (define r 10) (* pi (* r r)))"
-// log(eva(begin))
-
-// const fact1 = "(define fact (lambda (n) (if (<= n 1) 1 (* n (fact (- n 1))))))"
-// const fact2 = "(fact 100)"
-// eva(fact1)
-// var q = eva(fact2)
-// log(q)
+eva("(define first car)")
+eva("(define rest cdr)")
+eva("(define count (lambda (item L) (if L (+ (equal? item (first L)) (count item (rest L))) 0)))")
+// eva("(count 0 (list 0 1 2 3 0 0))")
+// eva("(count (quote the) (quote (the more the merrier the bigger the better)))")
 
 // eva("(define twice (lambda (x) (* 2 x)))")
 // eva("(define repeat (lambda (f) (lambda (x) (f (f x)))))")
-// log(eva("((repeat (repeat twice)) 10)")) // 160
-// log(eva("((repeat (repeat (repeat twice))) 10)")) // 2560
-// log(eva("((repeat (repeat (repeat (repeat twice)))) 10)")) // 655360
+// eva("((repeat (repeat twice)) 10)") // 160
+// eva("((repeat (repeat (repeat twice))) 10)") // 2560
+// eva("((repeat (repeat (repeat (repeat twice)))) 10)") // 655360
+
+
+// eva("(define fib (lambda (n) (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2))))))")
+// eva("(define range (lambda (a b) (if (= a b) (quote ()) (cons a (range (+ a 1) b)))))")
+// eva("(range 0 10)")
+// eva("(map fib (range 0 10))")
+// eva("(map fib (range 0 20))")
