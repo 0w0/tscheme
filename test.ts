@@ -19,8 +19,8 @@ let preDefine = [
   "(define rest cdr)",
   "(define count (lambda (item L) (if L (+ (equal? item (first L)) (count item (rest L))) 0)))"
 ]
-test(preDefine.concat(["(count 0 (list 0 1 2 3 0 0))"]), 4) // 3
-test(preDefine.concat(["(count (quote the) (quote (the more the merrier the bigger the better)))"]), 5) // 4
+test(preDefine.concat(["(count 0 (list 0 1 2 3 0 0))"]), 3)
+test(preDefine.concat(["(count (quote the) (quote (the more the merrier the bigger the better)))"]), 4)
 
 preDefine = [
   "(define twice (lambda (x) (* 2 x)))",
