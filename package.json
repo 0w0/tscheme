@@ -2,9 +2,11 @@
   "name": "tscheme",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "build/lib/index.js",
+  "types": "build/lib/index.d.ts",
   "scripts": {
-    "test": "node test.js"
+    "prepublish": "tsc",
+    "test": "node build/test/test"
   },
   "keywords": [],
   "author": "",

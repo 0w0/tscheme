@@ -3,7 +3,10 @@
         "module": "commonjs",
         "target": "es5",
         "noImplicitAny": false,
-        "sourceMap": false
+        "sourceMap": true,
+        "declaration": true,
+        "rootDir": "src",
+        "outDir": "build"
     },
     "exclude": [
         "node_modules"
