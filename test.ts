@@ -1,8 +1,8 @@
-import { eva } from "./index"
+import { evalate } from "./index"
 
 const test = (exps: Array<string>, expect) => {
   try {
-    const output = exps.map((exp) => eva(exp)).pop()
+    const output = exps.map((exp) => evalate(exp)).pop()
     console.assert(JSON.stringify(expect) === JSON.stringify(output), `Expect: ${expect}, but get ${output}`)
   } catch (err) {
     console.log("Error")

@@ -61,7 +61,7 @@ function merge(a, b) {
 
 const matchString = /(^"(.*)"$)|(^'(.*)'$)/ 
 
-function evalate(s: string | number | Array<string>, env = globalEnv) {
+function _evalate(s: string | number | Array<string>, env = globalEnv) {
   if (typeof s === 'string') {
     const ret = s.match(matchString) ? s.replace(matchString, (_, a, b, c ,d) => { if (b) { return b } else { return d } }) : env[s]
     if (ret === undefined) throw Error(`Unbond variable: [${s}] !`)
@@ -73,15 +73,15 @@ function evalate(s: string | number | Array<string>, env = globalEnv) {
     return s[1]
   } else if (s[0] === "if") {
     const [_, test, ret, or] = s
-    const exp = evalate(test, env) ? ret : or
+    const exp = _evalate(test, env) ? ret : or
 
-    return evalate(exp, env)
+    return _evalate(exp, env)
   } else if (s[0] === "define") {
     const [_, name, exp] = s
-    env[name] = evalate(exp, env)
+    env[name] = _evalate(exp, env)
   } else if (s[0] === "set!") {
     const [_, name, exp] = s
-    env[name] = evalate(exp, env)
+    env[name] = _evalate(exp, env)
   } else if (s[0] === "lambda") {
     const [_, params, func] = s
 
@@ -89,19 +89,19 @@ function evalate(s: string | number | Array<string>, env = globalEnv) {
       const tmpEnv =  {}
       args.forEach((val, idx) => tmpEnv[params[idx]] = val)
 
-      return evalate(func, merge(env, tmpEnv))
+      return _evalate(func, merge(env, tmpEnv))
     }
   } else if (s[0] === "begin") {
     const [_, ...exps] = s
 
-    return exps.map(exp => evalate(exp, env)).pop()
+    return exps.map(exp => _evalate(exp, env)).pop()
   } else {
     const [op, ...args] = s
-    const operation = evalate(op, env)
-    const subedArgs = args.map(arg => evalate(arg, env))
+    const operation = _evalate(op, env)
+    const subedArgs = args.map(arg => _evalate(arg, env))
 
     return operation.apply(null, subedArgs)
   }
 }
 
-export const eva = (s) =>evalate(parse(tokenize(s)))
+export const evalate = (s) =>_evalate(parse(tokenize(s)))
