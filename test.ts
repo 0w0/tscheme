@@ -12,7 +12,6 @@ const test = (exps: Array<string>, expect) => {
 }
 
 let preDefine = ["(define fact (lambda (n) (if (<= n 1) 1 (* n (fact (- n 1))))))"]
-
 test(["(define circle-area (lambda (r) (* 3.141592653 (* r r))))", "(circle-area 3)"], 28.274333877)
 test(preDefine.concat(["(fact 10)"]), 3628800)
 test(preDefine.concat(["(fact 100)"]), 9.33262154439441e+157)
