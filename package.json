@@ -8,9 +8,9 @@
     "prepublish": "tsc",
     "test": "node build/test/test"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["scheme", "iterpreter", "typescript"],
+  "author": "0w0",
+  "license": "MIT",
   "dependencies": {
   }
 }
