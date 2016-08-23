@@ -1,39 +1,30 @@
 // Ref: http://norvig.com/lispy.html
 // Using typescript as transpiler
 
-// TODO list data type
-
-
+// Standard envirment variables
 const globalEnv = {}
 // Import all Math method for convenience
 Object.getOwnPropertyNames(Math).forEach(method => globalEnv[method] = Math[method])
 // Import operator by eval closure
-const ops = ["+", "-", "*", "/", ">", "<", ">=", "<="].forEach(op => { globalEnv[op] = (a, b) => eval(`${a} ${op} ${b}`) })
-// self defined
-globalEnv["="] = (a, b) => a === b
+const ops = ["+", "-", "*", "/", ">", "<", ">=", "<="].forEach(op => { globalEnv[op] = (x, y) => eval(`${x} ${op} ${y}`) })
+globalEnv["remainder"] = (x, y) => x % y
+globalEnv["="] = (x, y) => JSON.stringify(x) === JSON.stringify(y)
+globalEnv["append"] = globalEnv["+"]
 globalEnv["equal?"] = globalEnv["="]
 globalEnv["eq?"] = globalEnv["="]
-globalEnv["remainder"] = (a, b) => a % b
-globalEnv["display"] = console.log
-globalEnv["append"] =
-globalEnv["apply"] =
-globalEnv["begin"] =
-globalEnv["car"] = x => (x.length !== 0) ? x[0] : null 
-globalEnv["cdr"] = x => (x.length > 1) ? x.slice(1) : null 
-globalEnv["cons"] = (x: any, y: Array<any>) => [x].concat(y)
-globalEnv["length"] = x => x.length
+// Lambda related
+globalEnv["map"] = (cb, list) => list.map(cb)
+globalEnv["apply"] = (cb, args) => cb.apply(null, args)
+// List releate 
 globalEnv["list"] = (...x) => x
 globalEnv["list?"] = x => typeof x === "array"
-globalEnv["range"] = (a, b) => [...Array(b-a+1)].map((v, k) => k + a)
-globalEnv["map"] = (cb, list) => list.map(cb)
-
-/*
-'not':     op.not_,
-'null?':   lambda x: x == [], 
-'number?': lambda x: isinstance(x, Number),   
-'procedure?': callable,
-'symbol?': lambda x: isinstance(x, Symbol),
-*/
+globalEnv["length"] = x => x.length
+globalEnv["car"] = x => (x.length !== 0) ? x[0] : null 
+globalEnv["cdr"] = x => (x.length > 1) ? x.slice(1) : null 
+globalEnv["cons"] = (x, y) => [x].concat(y)
+// Misc
+globalEnv["display"] = console.log
+globalEnv["not"] = x => typeof x === "boolean" ? !x : null
 
 const tokenize = (input: string) => input.replace(/(\()|(\))/g, (_, a, b) => { if (a) { return ` ${a} `} else { return ` ${b} ` } } ).replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "").split(" ");
 const atom = (token) => {
@@ -72,7 +63,10 @@ const matchString = /(^"(.*)"$)|(^'(.*)'$)/
 
 function evalate(s: string | number | Array<string>, env = globalEnv) {
   if (typeof s === 'string') {
-    return s.match(matchString) ? s.replace(matchString, (_, a, b, c ,d) => { if (b) { return b } else { return d } }) : env[s]
+    const ret = s.match(matchString) ? s.replace(matchString, (_, a, b, c ,d) => { if (b) { return b } else { return d } }) : env[s]
+    if (ret === undefined) throw Error(`Unbond variable: [${s}] !`)
+    
+    return ret 
   } else if (typeof s === "number") {
     return s
   } else if (s[0] === "quote") {
