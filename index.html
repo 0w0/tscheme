@@ -3,8 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <title>Tscheme</title>
+  <script src="bundle.js"></script>
 </head>
 <body>
-  <h1> Test gh-page </h1>
+  <input type="text" id="input"> <button id="enter"> Enter </button> <button id="clean"> Clean </button>
+  <div>Output</div> 
+  <div id="output"></div>
 </body>
+<script>
+  var tscheme = require('tscheme');
+  var $enter = document.getElementById("enter");
+  var $clean = document.getElementById("clean");
+  var $input = document.getElementById("input");
+  var $output = document.getElementById("output");
+
+  $enter.addEventListener("click", function() {
+    if ($input.value) {
+      try {
+        var out = tscheme.evalate($input.value);
+        $input.value = "";
+        if (out !== undefined) $output.innerHTML += out + "<br>"; 
+      } catch(err) {
+        $output.innerHTML += err.message + "<br>";
+      }
+    }
+  });
+
+  $clean.addEventListener("click", function() {
+    $output.innerHTML = ""; 
+  });
+
+</script>
 </html>
