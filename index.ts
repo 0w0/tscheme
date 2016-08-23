@@ -96,11 +96,9 @@ function _evalate(s: string | number | Array<string>, env = globalEnv) {
 
     return exps.map(exp => _evalate(exp, env)).pop()
   } else {
-    const [op, ...args] = s
-    const operation = _evalate(op, env)
-    const subedArgs = args.map(arg => _evalate(arg, env))
+    const [op, ...args] = s.map(exp => _evalate(exp, env))
 
-    return operation.apply(null, subedArgs)
+    return op.apply(null, args)
   }
 }
 
