@@ -126,4 +126,4 @@ function _evalate(s, env) {
     }
 }
 exports.evalate = function (s) { return _evalate(parse(tokenize(s))); };
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=main.js.map

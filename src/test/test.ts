@@ -1,4 +1,4 @@
-import { evalate } from "../lib/index"
+import { evalate } from "../lib/main"
 
 const test = (exps: Array<string>, expect) => {
   try {

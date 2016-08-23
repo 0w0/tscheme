@@ -1,8 +1,8 @@
 "use strict";
-var index_1 = require("../lib/index");
+var main_1 = require("../lib/main");
 var test = function (exps, expect) {
     try {
-        var output = exps.map(function (exp) { return index_1.evalate(exp); }).pop();
+        var output = exps.map(function (exp) { return main_1.evalate(exp); }).pop();
         console.assert(JSON.stringify(expect) === JSON.stringify(output), "Expect: " + expect + ", but get " + output);
     }
     catch (err) {

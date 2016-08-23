@@ -2,8 +2,8 @@
   "name": "tscheme",
   "version": "0.0.1",
   "description": "",
-  "main": "build/lib/index.js",
-  "types": "build/lib/index.d.ts",
+  "main": "build/lib/main.js",
+  "types": "build/lib/main.d.ts",
   "scripts": {
     "prepublish": "tsc",
     "test": "node build/test/test"
