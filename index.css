@@ -1,8 +1,17 @@
-html, body {
+/*html, body {
     display: table;
     margin: 0 auto;
-}
+}*/
 
 p {
   max-width: 75ch;
+}
+
+.intro {
+  float: left;
+}
+
+.repl {
+  float: left;
+  text-align: left;
 }
