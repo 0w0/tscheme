@@ -5,6 +5,7 @@
 var globalEnv = {};
 // Import all Math method for convenience
 Object.getOwnPropertyNames(Math).forEach(function (method) { return globalEnv[method] = Math[method]; });
+globalEnv["pi"] = Math.PI;
 // Import operator by eval closure
 var ops = ["+", "-", "*", "/", ">", "<", ">=", "<="].forEach(function (op) { globalEnv[op] = function (x, y) { return eval(x + " " + op + " " + y); }; });
 globalEnv["remainder"] = function (x, y) { return x % y; };
@@ -122,6 +123,7 @@ function _evaluate(s, env) {
     }
     else {
         var _a = s.map(function (exp) { return _evaluate(exp, env); }), op = _a[0], args = _a.slice(1);
+        // op should be a function or thorw error
         return op.apply(null, args);
     }
 }

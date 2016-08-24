@@ -5,6 +5,7 @@
 const globalEnv = {}
 // Import all Math method for convenience
 Object.getOwnPropertyNames(Math).forEach(method => globalEnv[method] = Math[method])
+globalEnv["pi"] = Math.PI
 // Import operator by eval closure
 const ops = ["+", "-", "*", "/", ">", "<", ">=", "<="].forEach(op => { globalEnv[op] = (x, y) => eval(`${x} ${op} ${y}`) })
 globalEnv["remainder"] = (x, y) => x % y
@@ -97,6 +98,8 @@ function _evaluate(s: string | number | Array<string>, env = globalEnv) {
     return exps.map(exp => _evaluate(exp, env)).pop()
   } else {
     const [op, ...args] = s.map(exp => _evaluate(exp, env))
+
+    // op should be a function or thorw error
 
     return op.apply(null, args)
   }
