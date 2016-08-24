@@ -1,10 +1,12 @@
 var tscheme = require('../node_modules/tscheme/build/lib/main.js');
 var $enter = document.getElementById("enter");
-var $clean = document.getElementById("clean");
+var $clear = document.getElementById("clear");
 var $input = document.getElementById("input");
 var $output = document.getElementById("output");
 
-$enter.addEventListener("click", function() {
+$enter.addEventListener("click", function() { eva(); });
+$input.addEventListener("keypress", function(event) { if (event.keyCode === 13) eva() })
+function eva() {
   if ($input.value) {
     try {
       var out = tscheme.evaluate($input.value);
@@ -14,8 +16,8 @@ $enter.addEventListener("click", function() {
       $output.innerHTML += err.message + "<br>";
     }
   }
-});
+}
 
-$clean.addEventListener("click", function() {
+$clear.addEventListener("click", function() {
   $output.innerHTML = ""; 
 });
