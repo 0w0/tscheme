@@ -124,6 +124,8 @@ function _evaluate(s, env) {
     else {
         var _a = s.map(function (exp) { return _evaluate(exp, env); }), op = _a[0], args = _a.slice(1);
         // op should be a function or thorw error
+        if (typeof op !== "function")
+            throw Error(s[0] + " is not a function !");
         return op.apply(null, args);
     }
 }

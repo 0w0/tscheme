@@ -98,8 +98,7 @@ function _evaluate(s: string | number | Array<string>, env = globalEnv) {
     return exps.map(exp => _evaluate(exp, env)).pop()
   } else {
     const [op, ...args] = s.map(exp => _evaluate(exp, env))
-
-    // op should be a function or thorw error
+    if (typeof op !== "function") throw Error(`${s[0]} is not a function !`)
 
     return op.apply(null, args)
   }
