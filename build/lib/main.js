@@ -72,7 +72,7 @@ function merge(a, b) {
     return obj;
 }
 var matchString = /(^"(.*)"$)|(^'(.*)'$)/;
-function _evalate(s, env) {
+function _evaluate(s, env) {
     if (env === void 0) { env = globalEnv; }
     if (typeof s === 'string') {
         var ret = s.match(matchString) ? s.replace(matchString, function (_, a, b, c, d) { if (b) {
@@ -93,16 +93,16 @@ function _evalate(s, env) {
     }
     else if (s[0] === "if") {
         var _ = s[0], test = s[1], ret = s[2], or = s[3];
-        var exp = _evalate(test, env) ? ret : or;
-        return _evalate(exp, env);
+        var exp = _evaluate(test, env) ? ret : or;
+        return _evaluate(exp, env);
     }
     else if (s[0] === "define") {
         var _ = s[0], name_1 = s[1], exp = s[2];
-        env[name_1] = _evalate(exp, env);
+        env[name_1] = _evaluate(exp, env);
     }
     else if (s[0] === "set!") {
         var _ = s[0], name_2 = s[1], exp = s[2];
-        env[name_2] = _evalate(exp, env);
+        env[name_2] = _evaluate(exp, env);
     }
     else if (s[0] === "lambda") {
         var _ = s[0], params_1 = s[1], func_1 = s[2];
@@ -113,17 +113,17 @@ function _evalate(s, env) {
             }
             var tmpEnv = {};
             args.forEach(function (val, idx) { return tmpEnv[params_1[idx]] = val; });
-            return _evalate(func_1, merge(env, tmpEnv));
+            return _evaluate(func_1, merge(env, tmpEnv));
         };
     }
     else if (s[0] === "begin") {
         var _ = s[0], exps = s.slice(1);
-        return exps.map(function (exp) { return _evalate(exp, env); }).pop();
+        return exps.map(function (exp) { return _evaluate(exp, env); }).pop();
     }
     else {
-        var _a = s.map(function (exp) { return _evalate(exp, env); }), op = _a[0], args = _a.slice(1);
+        var _a = s.map(function (exp) { return _evaluate(exp, env); }), op = _a[0], args = _a.slice(1);
         return op.apply(null, args);
     }
 }
-exports.evalate = function (s) { return _evalate(parse(tokenize(s))); };
+exports.evaluate = function (s) { return _evaluate(parse(tokenize(s))); };
 //# sourceMappingURL=main.js.map

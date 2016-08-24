@@ -1,8 +1,8 @@
-import { evalate } from "../lib/main"
+import { evaluate } from "../lib/main"
 
 const test = (exps: Array<string>, expect) => {
   try {
-    const output = exps.map((exp) => evalate(exp)).pop()
+    const output = exps.map((exp) => evaluate(exp)).pop()
     console.assert(JSON.stringify(expect) === JSON.stringify(output), `Expect: ${expect}, but get ${output}`)
   } catch (err) {
     console.log("Error")

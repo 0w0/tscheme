@@ -1,1 +1,1 @@
-export declare const evalate: (s: any) => any;
+export declare const evaluate: (s: any) => any;

@@ -2,7 +2,7 @@
 var main_1 = require("../lib/main");
 var test = function (exps, expect) {
     try {
-        var output = exps.map(function (exp) { return main_1.evalate(exp); }).pop();
+        var output = exps.map(function (exp) { return main_1.evaluate(exp); }).pop();
         console.assert(JSON.stringify(expect) === JSON.stringify(output), "Expect: " + expect + ", but get " + output);
     }
     catch (err) {
