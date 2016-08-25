@@ -10,3 +10,10 @@ p {
   float: left;
   text-align: left;
 }
+
+#output {
+  height: 400px;
+  width: 400px;
+  clear: both;
+  overflow-y: scroll;
+}

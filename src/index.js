@@ -15,6 +15,8 @@ function eva() {
     } catch(err) {
       $output.innerHTML += err.message + "<br>";
     }
+    
+    $output.scrollTop = $output.scrollHeight;
   }
 }
 
