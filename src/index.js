@@ -10,12 +10,13 @@ function eva() {
   if ($input.value) {
     try {
       var out = tscheme.evaluate($input.value);
-      $input.value = "";
-      if (out !== undefined) $output.innerHTML += out + "<br>"; 
+      if (typeof out === "function") $output.innerHTML += "Function [" + $input.value + "]" + "<br>";
+      else if (out !== undefined) $output.innerHTML += out + "<br>"; 
     } catch(err) {
       $output.innerHTML += err.message + "<br>";
     }
     
+    $input.value = "";
     $output.scrollTop = $output.scrollHeight;
   }
 }
