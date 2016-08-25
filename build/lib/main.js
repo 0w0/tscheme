@@ -44,7 +44,7 @@ var atom = function (token) {
 };
 var parse = function (tokens) {
     if (tokens.length === 0)
-        throw Error("Error: Unexpected EOF while reading !");
+        throw Error("Error: Unexpected EOF while reading!");
     var no1 = tokens.shift();
     if (no1 === "(") {
         var list = [];
@@ -55,7 +55,7 @@ var parse = function (tokens) {
         return list;
     }
     else if (no1 === ")") {
-        throw Error("Error: Unexpected ) !");
+        throw Error("Error: Unexpected [)]!");
     }
     else {
         return atom(no1);
@@ -83,7 +83,9 @@ function _evaluate(s, env) {
             return d;
         } }) : env[s];
         if (ret === undefined)
-            throw Error("Unbond variable: [" + s + "] !");
+            throw Error("Error: Unbond variable: [" + s + "]!");
+        if (typeof ret === "function")
+            return "Fcuntion [" + s + "]";
         return ret;
     }
     else if (typeof s === "number") {
@@ -123,9 +125,8 @@ function _evaluate(s, env) {
     }
     else {
         var _a = s.map(function (exp) { return _evaluate(exp, env); }), op = _a[0], args = _a.slice(1);
-        // op should be a function or thorw error
         if (typeof op !== "function")
-            throw Error(s[0] + " is not a function !");
+            throw Error("Error: " + s[0] + " is not a function!");
         return op.apply(null, args);
     }
 }

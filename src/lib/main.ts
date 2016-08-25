@@ -34,7 +34,7 @@ const atom = (token) => {
   return isNaN(ret) ? token : ret
 }
 const parse = (tokens: Array<string>) => {
-  if (tokens.length === 0) throw Error("Error: Unexpected EOF while reading !")
+  if (tokens.length === 0) throw Error("Error: Unexpected EOF while reading!")
   const no1 = tokens.shift()
   if (no1 === "(") {
     let list = []
@@ -45,7 +45,7 @@ const parse = (tokens: Array<string>) => {
 
     return list
   } else if (no1 === ")") {
-    throw Error("Error: Unexpected ) !")
+    throw Error("Error: Unexpected [)]!")
   } else {
     return atom(no1)
   }
@@ -65,7 +65,8 @@ const matchString = /(^"(.*)"$)|(^'(.*)'$)/
 function _evaluate(s: string | number | Array<string>, env = globalEnv) {
   if (typeof s === 'string') {
     const ret = s.match(matchString) ? s.replace(matchString, (_, a, b, c ,d) => { if (b) { return b } else { return d } }) : env[s]
-    if (ret === undefined) throw Error(`Unbond variable: [${s}] !`)
+    if (ret === undefined) throw Error(`Error: Unbond variable: [${s}]!`)
+    if (typeof ret === "function") return `Fcuntion [${s}]`
     
     return ret 
   } else if (typeof s === "number") {
@@ -98,7 +99,7 @@ function _evaluate(s: string | number | Array<string>, env = globalEnv) {
     return exps.map(exp => _evaluate(exp, env)).pop()
   } else {
     const [op, ...args] = s.map(exp => _evaluate(exp, env))
-    if (typeof op !== "function") throw Error(`${s[0]} is not a function !`)
+    if (typeof op !== "function") throw Error(`Error: ${s[0]} is not a function!`)
 
     return op.apply(null, args)
   }
