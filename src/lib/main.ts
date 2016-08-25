@@ -66,8 +66,7 @@ function _evaluate(s: string | number | Array<string>, env = globalEnv) {
   if (typeof s === 'string') {
     const ret = s.match(matchString) ? s.replace(matchString, (_, a, b, c ,d) => { if (b) { return b } else { return d } }) : env[s]
     if (ret === undefined) throw Error(`Error: Unbond variable: [${s}]!`)
-    if (typeof ret === "function") return `Fcuntion [${s}]`
-    
+
     return ret 
   } else if (typeof s === "number") {
     return s

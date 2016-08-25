@@ -84,8 +84,6 @@ function _evaluate(s, env) {
         } }) : env[s];
         if (ret === undefined)
             throw Error("Error: Unbond variable: [" + s + "]!");
-        if (typeof ret === "function")
-            return "Fcuntion [" + s + "]";
         return ret;
     }
     else if (typeof s === "number") {
