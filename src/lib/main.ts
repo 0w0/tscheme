@@ -1,6 +1,3 @@
-// Ref: http://norvig.com/lispy.html
-// Using typescript as transpiler
-
 // Standard envirment variables
 const globalEnv = {}
 // Import all Math method for convenience
